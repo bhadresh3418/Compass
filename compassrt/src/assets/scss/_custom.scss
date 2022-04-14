@@ -1,0 +1,14 @@
+$theme-colors: (
+    "primary": #121212,
+    "secondary": lightgray,
+    "success": green,
+    "danger": coral,
+    "warning": yellow,
+    "info": cyan,
+    "light": whitesmoke,
+    "dark": gray,
+    "muted": lightgray,
+    "white": #f2f2f2,
+);
+
+@import "/node_modules/bootstrap/scss/bootstrap";
