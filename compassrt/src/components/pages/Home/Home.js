@@ -4,28 +4,6 @@ import CenteredContainer from '../../utils/Containers/CenteredContainer';
 import io from "socket.io-client";
 
 import './Home.scss';
-const products = [
-  {
-    name: "p1",
-    price: "0.02$",
-    marketCap: "2,22,643$"
-  },
-  {
-    name: "p2",
-    price: "0.02$",
-    marketCap: "2,22,643$"
-  },
-  {
-    name: "p3",
-    price: "0.02$",
-    marketCap: "2,22,643$"
-  },
-  {
-    name: "p4",
-    price: "0.02$",
-    marketCap: "2,22,643$"
-  }
-]
 
 const columns = [{
   selector: (row,i) => i+1,
@@ -42,11 +20,12 @@ const columns = [{
 }];
 
 
-const socket = io("http://localhost:9090", {transports: ['websocket']});
+const socket = io("http://localhost:9090", {transports: ['websocket']}); // important thing is adding websocket transporter to using socket 
 
 const Home = () => {
-
   const [data, setData] = useState([]);
+
+  //use effect without dependencies will get executed at initial rendering
   useEffect(() => {
     console.log(socket);
     socket.on("FromAPI", updatedData => {
@@ -54,7 +33,7 @@ const Home = () => {
       setData(updatedData);
     });
   }, []);
-
+  
   const conditionalRowStyles = [
     {
       when: row => Number(row.price.replace("$","")) >= 3,
@@ -90,6 +69,7 @@ const Home = () => {
       
     },
   ]
+
   return (
     <React.Fragment>
       <div className="bg-black">

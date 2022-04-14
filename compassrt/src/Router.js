@@ -27,15 +27,10 @@ const Router = () => {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={lazyLoaded(<Home />)} />
+                <Route path="/" exact element={lazyLoaded(<Home />)} />
             </Routes>
         </BrowserRouter>
     )
 }
-
-
-
-
-
 
 export default Router
