@@ -1,0 +1,39 @@
+/* Define all colours */
+$light: whitesmoke;
+$dark: #121212;
+
+$black: #000;
+$white: #fff;
+
+$grey: #ccc;
+$cyan: #00fff5;
+$indigo: #5432d3;
+$skyblue: #63b3e9;
+$orange: #ff4c29;
+$yellow: #ecab20;
+$pink: #e94560;
+$purple: #57007e;
+$lightgrey: #dddddd;
+
+$primary: $cyan;
+$secondary: #999898;
+$success: #33cc33;
+$danger: #ff3333;
+$warning: $orange;
+$info: $skyblue;
+
+$muted: #cbcaca;
+
+$theme-colors: (
+    "primary": $primary,
+    "secondary": $secondary,
+    "success": $success,
+    "danger": $danger,
+    "warning": $warning,
+    "info": $info,
+    "light": $light,
+    "dark": $dark,
+    "muted": $muted,
+    "white": $white,
+    "black": $black,
+);
