@@ -54,37 +54,45 @@ const getApiAndEmit = socket => {
 
   //adding dummy data and using random function will return random string price and market cap
   const data = [{
+    id:1,
     name: "crud",
-    price: (random()).toFixed(2) + "$",
-    marketCap: (random() * 10000).toFixed(2) + "$",
+    price: (random()).toFixed(2),
+    marketCap: (random() * 10000).toFixed(2),
   }, {
+    id:2,
     name: "ISRT",
-    price: (random()).toFixed(2) + "$",
-    marketCap: (random() * 10000).toFixed(2) + "$",
+    price: (random()).toFixed(2),
+    marketCap: (random() * 10000).toFixed(2),
   }, {
+    id:3,
     name: "RRTC",
-    price: (random()).toFixed(2) + "$",
-    marketCap: (random() * 10000).toFixed(2) + "$",
+    price: (random()).toFixed(2),
+    marketCap: (random() * 10000).toFixed(2),
   }, {
+    id:4,
     name: "SSR",
-    price: (random()).toFixed(2) + "$",
-    marketCap: (random() * 10000).toFixed(2) + "$",
+    price: (random()).toFixed(2),
+    marketCap: (random() * 10000).toFixed(2),
   }, {
+    id:5,
     name: "INDD",
-    price: (random()).toFixed(2) + "$",
-    marketCap: (random() * 10000).toFixed(2) + "$",
+    price: (random()).toFixed(2),
+    marketCap: (random() * 10000).toFixed(2),
   }, {
+    id:6,
     name: "HTC",
-    price: (random()).toFixed(2) + "$",
-    marketCap: (random() * 10000).toFixed(2) + "$",
+    price: (random()).toFixed(2),
+    marketCap: (random() * 10000).toFixed(2),
   }, {
+    id:7,
     name: "APPL",
-    price: (random()).toFixed(2) + "$",
-    marketCap: (random() * 10000).toFixed(2) + "$",
+    price: (random()).toFixed(2),
+    marketCap: (random() * 10000).toFixed(2),
   }, {
-    name: "SSR",
-    price: (random()).toFixed(2) + "$",
-    marketCap: (random() * 10000).toFixed(2) + "$",
+    id:8,
+    name: "SSRT",
+    price: (random()).toFixed(2),
+    marketCap: (random() * 10000).toFixed(2),
   }];
   // Emitting a new message. Will be consumed by the client
   socket.emit("FromAPI", data);

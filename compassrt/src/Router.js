@@ -1,5 +1,6 @@
 import React, { lazy, Suspense } from 'react';
 import { Spinner } from 'react-bootstrap';
+import Navbar from "./components/common/Navbar/Navbar"
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CenteredContainer from './components/utils/Containers/CenteredContainer';
 
@@ -26,8 +27,11 @@ const lazyLoaded = (component) => {
 const Router = () => {
     return (
         <BrowserRouter>
+            <Navbar />
             <Routes>
                 <Route path="/" exact element={lazyLoaded(<Home />)} />
+                <Route path="/about" exact element={lazyLoaded(<Home />)} />
+                <Route path="/home" exact element={lazyLoaded(<Home />)} />
             </Routes>
         </BrowserRouter>
     )

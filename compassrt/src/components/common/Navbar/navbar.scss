@@ -1,0 +1,37 @@
+@import "/src/assets/scss/sizes";
+@import "/src/assets/scss/colors";
+
+.navlink {
+    &_font {
+        font-size: $text-sm;
+        text-transform: uppercase;
+        margin: 0.7rem;
+        font-weight: 500;
+    }
+    &_fontright{
+        font-size: $text-sm;
+        text-transform: uppercase;
+        margin: 0.7rem;
+        font-weight: 500;
+
+        // font-size: $text-sm;
+        // text-transform: uppercase;
+        // margin: 0.7rem;
+        // color: $dark !important;
+        // font-weight: 500;
+    }
+
+}
+
+.brandLogo {
+    -webkit-animation:spin 4s linear infinite;
+    -moz-animation:spin 4s linear infinite;
+    animation:spin 4s linear infinite;
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+}
+@-moz-keyframes spin { 100% { -moz-transform: rotateY(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotateY(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotateY(360deg); transform:rotateY(360deg); } }
+
