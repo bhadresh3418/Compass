@@ -10,31 +10,41 @@ import { Link } from 'react-router-dom';
 
 const NavigationBar = () => {
   return (
-    <div>
+    <div className="navbarContainer">
       <div className="position-fixed top-0 start-50 translate-middle-x">
         <img className="brandLogo" src={`/logo192.png`} />
       </div>
       <Navbar fixed="top" variant="dark">
         <Container fluid>
-          <Nav >
-            <Link to="/about">
-            <Nav.Link className="navlink_font" >Home</Nav.Link>
-            </Link>
-            <Link to="/about">
-            <Nav.Link className="navlink_font" >Blog</Nav.Link>
-            </Link>
+          
+          <Nav>
+            <Nav.Link className="navlink_font" >
+              <Link to="/">Home </Link>
+            </Nav.Link>
+            <Nav.Link className="navlink_font" >
+              <Link to="/">Blog</Link>
+            </Nav.Link>
           </Nav>
 
           <Nav>
-            <Nav.Link className="navlink_fontright">Gallery</Nav.Link>
-            <Nav.Link className="navlink_fontright">Work</Nav.Link>
-            <Nav.Link className="navlink_fontright">Contact me</Nav.Link>
-            <Nav.Link className="navlink_fontright">about me</Nav.Link>
+            <Nav.Link className="navlink_fontright">
+              <Link to="/">Gallery </Link>
+            </Nav.Link>
+            <Nav.Link className="navlink_fontright">
+              <Link to="/">Work</Link>
+            </Nav.Link>
+            <Nav.Link className="navlink_fontright">
+              <Link to="/">Contact</Link>
+            </Nav.Link>
+            <Nav.Link className="navlink_fontright">
+              <Link to="/about">about</Link>
+            </Nav.Link>
           </Nav>
+
         </Container>
       </Navbar>
     </div>
-
+  
 
   )
 }

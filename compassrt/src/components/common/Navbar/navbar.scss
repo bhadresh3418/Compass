@@ -1,6 +1,9 @@
 @import "/src/assets/scss/sizes";
 @import "/src/assets/scss/colors";
 
+.navbarContainer{
+    margin-top: 65px;
+}
 .navlink {
     &_font {
         font-size: $text-sm;
@@ -20,7 +23,6 @@
         // color: $dark !important;
         // font-weight: 500;
     }
-
 }
 
 .brandLogo {

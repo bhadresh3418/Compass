@@ -6,6 +6,8 @@ import CenteredContainer from './components/utils/Containers/CenteredContainer';
 
 //lazy loading all the required components
 const Home = lazy(() => import("./components/pages/Home/Home"));
+const About = lazy(() => import("./components/pages/About/About"));
+
 
 //loader to handle fallback of UI
 const Loader = () => {
@@ -30,8 +32,7 @@ const Router = () => {
             <Navbar />
             <Routes>
                 <Route path="/" exact element={lazyLoaded(<Home />)} />
-                <Route path="/about" exact element={lazyLoaded(<Home />)} />
-                <Route path="/home" exact element={lazyLoaded(<Home />)} />
+                <Route path="/about" exact element={lazyLoaded(<About />)} />
             </Routes>
         </BrowserRouter>
     )
