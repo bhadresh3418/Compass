@@ -2,8 +2,10 @@
 // calls and everything to how we will handle incoming request
 exports.getData = async (req, res) => {
     try {
+        const authUser = req.user;
+        
         return res.status(200).json({
-            data: "data is here",
+            data: req.user,
             success: true,
         })
     }catch(e){

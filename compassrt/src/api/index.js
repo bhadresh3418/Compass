@@ -21,8 +21,6 @@ const getRequest = async (URI, headers = null) => {
     return res;
 }
 
-
-
 // Users APIs starting from here
 
 export const getData = async () => {
