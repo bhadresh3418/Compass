@@ -13,14 +13,19 @@ exports.signup = async (req, res) => {
             bio: req.body.bio,
             image: req.body.image,
         });
-
+        
         await userDetails.save();
+        //till that we have data without password informations : hash, salt
+        console.log("userDetails",userDetails);
         // fetch the user and test password verification
         let user = await Users.findById(userDetails.id);
+
+        console.log("user", user);
         user.setPassword(req.body.password);
+        console.log("user", user);
 
         const updatedUser = await Users.findByIdAndUpdate(userDetails.id, user);
-
+        
         updatedUser.emitPassword();
 
         return res.status(200).json({
@@ -32,6 +37,7 @@ exports.signup = async (req, res) => {
         })
 
     } catch (e) {
+        console.log(e);
         return res.status(400).json({
             error: e.message,
             success: false,

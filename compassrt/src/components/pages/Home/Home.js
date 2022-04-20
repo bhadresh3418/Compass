@@ -33,7 +33,7 @@ const initialData = [{
   s: "IC MARKETS:1",
   t: 0,
   v: 0
- 
+
 }
 
 ];
@@ -45,6 +45,24 @@ const Home = () => {
 
   const gridRef = useRef(null);
 
+  useEffect(() => {
+    socket.on('connect', socket => {
+      console.log('connected')
+    })
+    socket.on("livedata", (data) => {
+      const parsedData = JSON.parse(data);
+      console.log(parsedData)
+      console.log("emitting to livedata", parsedData)
+      if (parsedData.type === "trade" && gridRef.current) {
+        gridRef.current.api.applyTransactionAsync({ update: parsedData.data });
+      }else if(parsedData.type == "ready"){
+        setReady(true);
+      }
+      // socket.emit("subscribe","ARL,123");
+    })
+    return () => socket.removeAllListeners("livedata");
+  }, []);
+
   const numberCellFormatter = (params) => {
     return String(Number(params.value).toFixed(2)) + " $";
   };
@@ -52,7 +70,7 @@ const Home = () => {
     { field: 's', sortable: true }
   ])
   const [columnDefs] = useState([
-    { field: 's', sortable: true,width:'100' },
+    { field: 's', sortable: true, width: '100' },
     {
       field: 'p',
       sortable: true,
@@ -60,7 +78,7 @@ const Home = () => {
       valueFormatter: numberCellFormatter,
       enableValue: true,
       cellClass: 'number',
-      width:'250',
+      width: '250',
       cellRenderer: 'agAnimateShowChangeCellRenderer',
     },
     {
@@ -70,7 +88,7 @@ const Home = () => {
       enableValue: true,
       valueFormatter: numberCellFormatter,
       cellClass: 'number',
-      width:'250',
+      width: '250',
       cellRenderer: 'agAnimateShowChangeCellRenderer',
     },
   ]);
@@ -83,24 +101,9 @@ const Home = () => {
   const initiSocket = (stockList, api) => {
     console.log("on", stockList)
     socket.emit("subscribe", stockList);
-    socket.on("livedata", (data) => {
-      const parsedData = JSON.parse(data);
-      console.log(parsedData)
-      console.log("emitting to subscribe", parsedData)
-      if (parsedData.type === "trade") {
-        api.applyTransactionAsync({ update: parsedData.data });
-      }
-      // socket.emit("subscribe","ARL,123");
-    })
   }
   const startFeed = (api) => {
     console.log("grid ready")
-    
-    socket.on("readyToStart", (data) => {
-      if (data === "ok") {
-        setReady(true);
-      }
-    })
     // initiSocket("AAPL", api);
     // socket.on("livedata", (data) => {
     //   console.log(data);
@@ -135,7 +138,7 @@ const Home = () => {
   }, []);
 
   const unsubscribe = (data) => {
-    socket.emit("unsubscribe",data);
+    socket.emit("unsubscribe", data);
   }
 
   const onCellClicked = (row) => {
@@ -180,7 +183,7 @@ const Home = () => {
             <AgGridReact
               getRowId={getRowId}   // passing function that defines unique id for row in our case it's name
               rowData={initialData}   // passing initial data to render on widget table
-              asyncTransactionWaitMillis={1000} // interval to update data
+              // asyncTransactionWaitMillis={1000} // interval to update data
               onCellClicked={onCellClicked} // function that will execute on cell clicked
               columnDefs={columnDefsForNames} // column definations
               animateRows={true} // animation of rows true
@@ -194,7 +197,7 @@ const Home = () => {
               ref={gridRef}
               getRowId={getRowId}
               rowData={data}
-              asyncTransactionWaitMillis={1000}
+              // asyncTransactionWaitMillis={1000}
               columnDefs={columnDefs}
               onGridReady={onGridReady} // on grid ready function 
               animateRows={true}

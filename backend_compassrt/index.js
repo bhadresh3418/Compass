@@ -24,53 +24,40 @@ const webSocket = new WebSocket('wss://ws.finnhub.io?token=' + ENV.FINHUB_API_KE
 const startListening = async () => {
   // Connection opened -> Subscribe
   //connection called whenever socket connect with client
-  serverIo.on("connection", (socket) => {
-    console.log("New client connected");
-    // if (interval) {
-    //   clearInterval(interval);
-    // }
-    webSocket.addEventListener('open', function (event) {
-      const id = 1;
-      console.log("ready");
-      socket.on("restart", () => {
 
-      });
-      socket.emit("readyToStart", "ok");
-      // webSocket.send(JSON.stringify({ type: 'subscribe', symbol: "AAPL" }))
+  // if (interval) {
+  //   clearInterval(interval);
+  // }
+  webSocket.addEventListener('open', function (event) {
+    console.log("ready");
+    serverIo.on("connection", (socket) => {
+      console.log("New client connected");
+      socket.emit("livedata", JSON.stringify({
+        type: "ready"
+      }));
+
       socket.on(`subscribe`, (data) => {
         console.log(data)
         const list = data.split(",");
-        console.log(data, list)
-        //   // const list = JSON.parse(data);
-        //   webSocket.send(JSON.stringify({ type: 'subscribe', symbol: "AAPL" }))
         list.map((stockName) => {
+          console.log("added to subscribe", stockName)
           webSocket.send(JSON.stringify({ type: 'subscribe', symbol: stockName }))
-        });
-
-        webSocket.addEventListener('message', function (event) {
-          socket.emit(`livedata`, event.data);
-          console.log('\n\nMessage from server ', event.data);
         });
       })
 
       socket.on("unsubscribe", (data) => {
         webSocket.send(JSON.stringify({ 'type': 'unsubscribe', 'symbol': data }))
       })
-      // socket.emit("connection_established");
 
+      webSocket.addEventListener('message', function (event) {
+        socket.emit(`livedata`, event.data);
+        console.log('\n\nMessage from server ', event.data);
+      });
 
-      // socket.send(JSON.stringify({ type: 'subscribe', symbol: 'AAPL' }))
-      // socket.send(JSON.stringify({ 'type': 'subscribe', 'symbol': 'BINANCE:BTCUSDT' }))
-      // socket.send(JSON.stringify({ 'type': 'subscribe', 'symbol': 'IC MARKETS:1' }))
-    });
-    // Listen for messages
-    //set interval will call getApiAndEmit per 1s interval
-    // interval = setInterval(() => getApiAndEmit(socket), 1000);
-
-    //disconnet will called whenevr socket disconnected
-    socket.on("disconnect", () => {
-      console.log("Client disconnected");
-      clearInterval(interval);
+      socket.on("disconnect", () => {
+        console.log("Client disconnected");
+        clearInterval(interval);
+      });
     });
   });
 
