@@ -5,6 +5,7 @@ const Users = require("../models/Users");
 exports.getUser = async (req, res) => {
     try {
         const authUser = req.user;
+        console.log("auth user",req.user);
         const user = await Users.findById(authUser.id);
         if (!user) {
             return res.errorMessage("user not found");
