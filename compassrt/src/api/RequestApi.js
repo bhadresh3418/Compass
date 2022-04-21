@@ -2,17 +2,17 @@
 
 //Authenntication APIs endpoints 
 const authRequest = {
-    login: "/login",
-    signup: "/sign_up",
+    login: "/auth/login",
+    signup: "/auth/sign_up",
 };
 
 //Datas APIs endpoints 
-const dataRequest = {
-    getData: "/getData",
+const serviceRequest = {
+    getData: "/service/getData",
 };
 
 
 export {
     authRequest,
-    dataRequest
+    serviceRequest
 };

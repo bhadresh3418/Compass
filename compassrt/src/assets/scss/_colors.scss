@@ -1,6 +1,6 @@
 /* Define all colours */
 $light: whitesmoke;
-$dark: #121212;
+$dark: #131722;
 
 $black: #000;
 $white: #fff;
@@ -15,8 +15,8 @@ $pink: #e94560;
 $purple: #57007e;
 $lightgrey: #dddddd;
 
-$primary: $cyan;
-$secondary: #999898;
+$primary: #2962ff;
+$secondary: #1e222d;
 $success: #33cc33;
 $danger: #ff3333;
 $warning: $orange;
@@ -24,6 +24,9 @@ $info: $skyblue;
 
 $muted: #cbcaca;
 
+$text-normal: #aeb1b9;
+
+$secondary2 : #2a2e39;
 $theme-colors: (
     "primary": $primary,
     "secondary": $secondary,

@@ -6,17 +6,27 @@ import {
   Nav,
   Image
 } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../../redux/slices/authReducer';
 
 const NavigationBar = () => {
+  const auth = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/");
+  }
   return (
     <div className="navbarContainer">
       <div className="position-fixed top-0 start-50 translate-middle-x">
         <img className="brandLogo" src={`/logo192.png`} />
+
       </div>
       <Navbar fixed="top" variant="dark">
         <Container fluid>
-          
           <Nav>
             <Nav.Link className="navlink_font" >
               <Link to="/">Home </Link>
@@ -37,14 +47,16 @@ const NavigationBar = () => {
               <Link to="/">Contact</Link>
             </Nav.Link>
             <Nav.Link className="navlink_fontright">
-              <Link to="/about">about</Link>
+              {
+                auth.isAuthenticated ? <div onClick={handleLogout}>logout</div> : <Link to="/login">login</Link>
+              }
             </Nav.Link>
           </Nav>
 
         </Container>
       </Navbar>
     </div>
-  
+
 
   )
 }
