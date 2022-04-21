@@ -1,6 +1,4 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import DataTable from 'react-data-table-component';
-import CenteredContainer from '../../utils/Containers/CenteredContainer';
 import io from "socket.io-client";
 import { AgGridReact } from 'ag-grid-react';
 
@@ -23,17 +21,16 @@ const initialData = [{
 {
   c: [],
   p: 0,
-  s: "BINANCE:BTCUSDT",
+  s: "FB",
   t: 0,
   v: 0
 },
 {
   c: [],
   p: 0,
-  s: "IC MARKETS:1",
+  s: "GOOG",
   t: 0,
   v: 0
-
 }
 
 ];
@@ -55,40 +52,61 @@ const Home = () => {
       console.log("emitting to livedata", parsedData)
       if (parsedData.type === "trade" && gridRef.current) {
         gridRef.current.api.applyTransactionAsync({ update: parsedData.data });
-      }else if(parsedData.type == "ready"){
+      } else if (parsedData.type == "ready") {
         setReady(true);
       }
       // socket.emit("subscribe","ARL,123");
     })
-    return () => socket.removeAllListeners("livedata");
+    return () => {
+      activeIds.map((id) => {
+        socket.emit("unsubscribe", id);
+      });
+      socket.removeAllListeners("livedata");
+      socket.disconnect();
+    }
   }, []);
 
   const numberCellFormatter = (params) => {
     return String(Number(params.value).toFixed(2)) + " $";
   };
+
+  const volumnFormatter = (params) => {
+    return parseInt(params.value)
+  };
+
   const [columnDefsForNames] = useState([
-    { field: 's', sortable: true }
-  ])
+    { headerName: 'Stock', field: 's', sortable: true }
+  ]);
+
   const [columnDefs] = useState([
-    { field: 's', sortable: true, width: '100' },
+    { headerName: 'Stock', field: 's', sortable: true },
     {
+      headerName: 'Price',
       field: 'p',
       sortable: true,
       aggFunc: 'sum',
       valueFormatter: numberCellFormatter,
       enableValue: true,
       cellClass: 'number',
-      width: '250',
       cellRenderer: 'agAnimateShowChangeCellRenderer',
     },
     {
+      headerName: 'Volatility',
       field: 'v',
       sortable: true,
       aggFunc: 'sum',
       enableValue: true,
       valueFormatter: numberCellFormatter,
       cellClass: 'number',
-      width: '250',
+      cellRenderer: 'agAnimateShowChangeCellRenderer',
+    },
+    {
+      headerName: 'Volumn',
+      field: 't',
+      sortable: true,
+      enableValue: true,
+      valueFormatter: volumnFormatter,
+      // cellClass: 'number',
       cellRenderer: 'agAnimateShowChangeCellRenderer',
     },
   ]);
@@ -102,20 +120,9 @@ const Home = () => {
     console.log("on", stockList)
     socket.emit("subscribe", stockList);
   }
+
   const startFeed = (api) => {
     console.log("grid ready")
-    // initiSocket("AAPL", api);
-    // socket.on("livedata", (data) => {
-    //   console.log(data);
-    // })
-    // socket.on("FromAPI", updatedData => {
-    // var resultCallback = function () {
-    //   console.log('transactionApplied() - ', updatedData);
-    // };
-    //   // below line find updated data and add effect to it
-    //   api.applyTransactionAsync({ update: updatedData }, resultCallback);
-    //   // setData(updatedData);
-    // });
   };
 
   const getRowId = useCallback(function (params) {
@@ -190,7 +197,7 @@ const Home = () => {
             >
             </AgGridReact>
           </div>
-          <div className="ag-theme-balham-dark" style={{ height: 600, width: 605 }}>
+          <div className="ag-theme-balham-dark" style={{ height: 600, width: 850 }}>
 
             {/* Data table high frequency */}
             <AgGridReact

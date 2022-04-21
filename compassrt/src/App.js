@@ -1,10 +1,15 @@
 import React from 'react';
 import Router from './Router';
+import {store} from './redux/store';
+import {Provider} from 'react-redux';
+
 import './assets/scss/main.scss';
 
 function App() {
   return (
-      <Router/>
+    <Provider store={store} >
+      <Router />
+    </Provider>
   );
 }
 

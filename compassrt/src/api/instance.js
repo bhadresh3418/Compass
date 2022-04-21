@@ -3,13 +3,9 @@ import env from "react-dotenv";
 
 // This file contains base url and exporting instance
 
-const getToken = () => {
-    // code to get token
-    const token = "slkhijasdbijuhsduaijkHDsahuidas";
-    return token;
-};
+const getToken = () => localStorage.getItem('token');
 
-axios.defaults.headers.common["token"] = getToken();
+axios.defaults.headers.common["x-access-token"] = getToken();
 
 const instance = axios.create({
   baseURL: env.API_BASE_URL || "http://localhost:9090/api",

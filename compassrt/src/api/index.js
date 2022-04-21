@@ -5,7 +5,7 @@ import * as RequestApi from "./RequestApi";
 //common functions to manage request , response and handling error
 
 const sendError = (err, showConsole = false) => {
-    if(showConsole){
+    if (showConsole) {
         console.log(err);
     }
     return err.message;
@@ -25,9 +25,26 @@ const getRequest = async (URI, headers = null) => {
 
 export const getData = async () => {
     try {
-        const response = await getRequest(RequestApi.dataRequest.getData);
+        const response = await getRequest(RequestApi.serviceRequest.getData);
         return response;
     } catch (err) {
-        sendError(err,true);
+        sendError(err, true);
+    }
+}
+
+export const login = async (data) => {
+    try {
+        const {
+            email,
+            password,
+        } = data;
+        const body = {
+            email,
+            password
+        }
+        const response = await postRequest(RequestApi.authRequest.login, body);
+        return response;
+    } catch (err) {
+        sendError(err, true);
     }
 }

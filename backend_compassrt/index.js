@@ -16,9 +16,6 @@ const PORT = ENV.PORT;
 // Create a new express application instance
 const app = express();
 
-// const api_key = finnhub.ApiClient.instance.authentications['api_key'];
-// api_key.apiKey = ENV.FINHUB_API_KEY // Replace this
-// const finnhubClient = io('wss://ws.finnhub.io?token=' + ENV.FINHUB_WEBHOOK_SECRET_KEY)
 const webSocket = new WebSocket('wss://ws.finnhub.io?token=' + ENV.FINHUB_API_KEY);
 
 const startListening = async () => {
@@ -55,6 +52,9 @@ const startListening = async () => {
       });
 
       socket.on("disconnect", () => {
+        webSocket.removeEventListener('message',(data)=>{
+          console.log(data)
+        });
         console.log("Client disconnected");
         clearInterval(interval);
       });
@@ -66,8 +66,6 @@ const startListening = async () => {
   // Unsubscribe
 
 }
-
-
 
 // Configure middleware cors to avoid CORS errors
 app.use(cors())

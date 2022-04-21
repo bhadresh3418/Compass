@@ -16,13 +16,11 @@ exports.signup = async (req, res) => {
         
         await userDetails.save();
         //till that we have data without password informations : hash, salt
-        console.log("userDetails",userDetails);
+        
         // fetch the user and test password verification
         let user = await Users.findById(userDetails.id);
 
-        console.log("user", user);
         user.setPassword(req.body.password);
-        console.log("user", user);
 
         const updatedUser = await Users.findByIdAndUpdate(userDetails.id, user);
         
@@ -37,7 +35,6 @@ exports.signup = async (req, res) => {
         })
 
     } catch (e) {
-        console.log(e);
         return res.status(400).json({
             error: e.message,
             success: false,
@@ -50,7 +47,6 @@ exports.login = async (req, res) => {
         // fetch the user and test password verification
         const user = await Users.findOne({ email: req.body.email }).exec();
         let token = null;
-        console.log(user)
         if (user && user.validPassword(req.body.password)) {
             token = user.generateJWT();
         } else {
