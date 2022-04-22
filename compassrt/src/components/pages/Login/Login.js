@@ -16,8 +16,9 @@ const Login = () => {
   });
 
 
-
   const [loginActive, setLoginActive] = useState(true)
+  const [error, setError] = useState(null);
+
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const auth = useSelector(state => state.auth);
@@ -30,22 +31,27 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      const res = await login(input);
-      const token = res.data.data.token;
-      dispatch(authenticate(token));
-      navigate("/dashboard");
-    } catch (e) {
-
+    if (!input.email || !input.password) {
+      setError("All fields are required!")
+      return;
     }
-    console.log(input);
+    const res = await login(input);
+    if (res.success) {
+      const token = res.data.token;
+      dispatch(authenticate(token));
+      setError(null);
+      navigate("/dashboard");
+    } else {
+      setError(res.message);
+    }
   }
 
   const handleChange = (e) => {
+    console.log(e.target);
     setInput({
       ...input,
       [e.target.name]: e.target.value
-    })
+    });
     console.log(input)
   }
 
@@ -59,14 +65,14 @@ const Login = () => {
       email: "",
       password: "",
       confirm_password: ""
-    })
+    });
+    setError(null);
     setLoginActive(!loginActive);
     console.log(loginActive);
   }
 
   const handleSignUp = (e) => {
     e.preventDefault();
-    console.log(input)
   }
 
 
@@ -81,13 +87,14 @@ const Login = () => {
               <p>Advance, fast and optimized application that can handle millions of users at a same time.</p>
             </div>
           </Col>
+
+
           <Col xs={12} md={{ span: '6', order: 'last' }} className={`p-2 p-md-5 d-flex align-items-center ${loginActive ? "d-block" : "d-none"}`} style={{ minHeight: "560px" }}>
 
             <Form className="w-100">
               <div>
                 <h1 className='text-white text-center' style={{ fontWeight: 700 }}>LOG IN</h1>
               </div>
-
               <Form.Group >
                 <Form.Label className="text-light mt-1">
                   Email
@@ -102,12 +109,19 @@ const Login = () => {
                     Don't have account ? <span className="link-primary" onClick={toogleTab}>Sign up</span>
                   </p>
                 </Form.Text>
+                <div className="text-danger small text-center">
+                  {error}
+                </div>
                 <Button variant="primary" onClick={handleLogin} className="my-2 w-100" >
                   Sign in
                 </Button>
               </Form.Group>
             </Form>
           </Col>
+
+
+
+
           <Col xs={12} md={{ span: '6', order: 'first' }} className={`p-2 p-md-5 ${loginActive ? "d-none" : "d-block"}`} style={{ minHeight: "560px" }}>
             <Form className="m-1 m-md-auto">
               <div className="text-center">
@@ -139,6 +153,9 @@ const Login = () => {
                     Already have an account ? <span className="link-primary" onClick={toogleTab}>Login</span>
                   </p>
                 </Form.Text>
+                <div className="text-danger small text-center">
+                  {error}
+                </div>
                 <Button variant="primary" onClick={handleSignUp} className="w-100" >
                   Sign up
                 </Button>

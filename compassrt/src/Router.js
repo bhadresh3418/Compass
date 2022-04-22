@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useEffect } from 'react';
 import { Spinner } from 'react-bootstrap';
 import Navbar from "./components/common/Navbar/Navbar"
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import CenteredContainer from './components/utils/Containers/CenteredContainer';
 import { useReducer } from 'react';
 import { authenticate } from './redux/slices/authReducer';
