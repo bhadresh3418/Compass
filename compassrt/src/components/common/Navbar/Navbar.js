@@ -48,7 +48,7 @@ const NavigationBar = () => {
             </Nav.Link>
             <Nav.Link className="navlink_fontright">
               {
-                auth.isAuthenticated ? <div onClick={handleLogout}>logout</div> : <Link to="/login">login</Link>
+                auth.isAuthenticated ? <div onClick={handleLogout}>logout</div> : <Link to="/">login</Link>
               }
             </Nav.Link>
           </Nav>

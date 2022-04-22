@@ -13,17 +13,17 @@ exports.signup = async (req, res) => {
             bio: req.body.bio,
             image: req.body.image,
         });
-        
+
         await userDetails.save();
         //till that we have data without password informations : hash, salt
-        
+
         // fetch the user and test password verification
         let user = await Users.findById(userDetails.id);
 
         user.setPassword(req.body.password);
 
         const updatedUser = await Users.findByIdAndUpdate(userDetails.id, user);
-        
+
         updatedUser.emitPassword();
 
         return res.status(200).json({
@@ -47,7 +47,10 @@ exports.login = async (req, res) => {
         // fetch the user and test password verification
         const user = await Users.findOne({ email: req.body.email }).exec();
         let token = null;
-        if (user && user.validPassword(req.body.password)) {
+        if (!user) {
+            return res.errorMessage("user not found!")
+        }
+        if (user.validPassword(req.body.password)) {
             token = user.generateJWT();
         } else {
             return res.errorMessage("wrong password!")
