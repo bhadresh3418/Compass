@@ -7,21 +7,13 @@ import { useReducer } from 'react';
 import { authenticate } from './redux/slices/authReducer';
 import { useDispatch, useSelector } from 'react-redux';
 import { getData } from './api';
+import Loader from './components/utils/Loader';
 
 //lazy loading all the required components
 const Home = lazy(() => import("./components/pages/Home/Home"));
 const About = lazy(() => import("./components/pages/About/About"));
 const Login = lazy(() => import("./components/pages/Login/Login"));
 
-//loader to handle fallback of UI
-const Loader = () => {
-    return <CenteredContainer>
-        <Spinner animation="border" >
-            <span className="visually-hidden">Loading...</span>
-        </Spinner>
-    </CenteredContainer>
-
-}
 
 //lazyLoaded component needed fallback UI either can't displayed by react-route-dom
 
