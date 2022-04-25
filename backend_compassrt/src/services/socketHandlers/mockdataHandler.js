@@ -5,20 +5,19 @@ module.exports = (socketIo, socket, webSocket) => {
     console.log(data);
     switch (parsedData.type) {
       case "start":
-        console.log("started mockdata listening...", Array.from(socket.adapter.rooms))
         setInterval(() => {
           // console.log("mock_",Object.assign(socket.adapter))
+
           Array.from(socket.adapter.rooms).forEach((room) => {
+            
             if (typeof (room[0]) === 'string' && room[0].split("_")[0] === "mock") {
               const stackname = room[0].split("_")[1];
-              const generatedData = Array.from({ length: 3 }).map((a) => {
-                return {
-                  s: stackname,
-                  v: Math.random() * 1,
-                  p: Math.random() * 100,
-                  mock:true
-                }
-              });
+              const generatedData = [{
+                s: stackname,
+                v: Math.random() * 1,
+                p: Math.random() * 100,
+                mock:true
+              }];
               socketIo.to(room[0]).emit(`mockdata`, {
                 type: 'trade',
                 data: generatedData
@@ -28,7 +27,7 @@ module.exports = (socketIo, socket, webSocket) => {
         }, 1000);
         break;
       case "subscribe":
-        socket.join("mock_" + parsedData.data);
+        socket.join("mock_" + parsedData.data); // 5
         console.log(socket.adapter.rooms);
         console.log("joined mock room", parsedData.data)
         break;
