@@ -79,3 +79,12 @@ export const signUp = async (data) => {
         return sendError(err, true);
     }
 }
+
+export const searchStock = async (data) => {
+    try{
+        const response = await getRequest(`${RequestApi.stockRequest.stockLookup}?q=${data}`);
+        return response.data;
+    }catch(err){
+        return sendError(err, true);
+    }
+}

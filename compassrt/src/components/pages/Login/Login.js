@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Container, Col, Row } from 'react-bootstrap';
-import { login } from '../../../api';
+import { login, signUp } from '../../../api';
 import "./Login.scss";
 import { authenticate } from '../../../redux/slices/authReducer';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,7 +14,6 @@ const Login = () => {
     password: "",
     confirm_password: ""
   });
-
 
   const [loginActive, setLoginActive] = useState(true)
   const [error, setError] = useState(null);
@@ -71,8 +70,21 @@ const Login = () => {
     console.log(loginActive);
   }
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
+    if (Object.values(input).find((value) => !value)) {
+      setError("All fields are required!")
+      return;
+    }
+    const res = await signUp(input);
+    if (res.success) {
+      const token = res.data.token;
+      dispatch(authenticate(token));
+      setError(null);
+      navigate("/dashboard");
+    } else {
+      setError(res.message);
+    }
   }
 
 

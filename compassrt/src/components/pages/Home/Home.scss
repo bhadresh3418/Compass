@@ -1,0 +1,8 @@
+.ag-theme-alpine {
+    /* use theme parameters where possible */
+    --ag-foreground-color: deeppink;
+}
+/* or write CSS selectors to make customisations beyond what the parameters support */
+.ag-theme-alpine .ag-header {
+    font-style: italic;
+}
