@@ -40,7 +40,6 @@ const Home = () => {
     socket.on(`livedata`, (data) => {
       const parsedData = data;
       console.log("emitting to livedata", parsedData)
-      console.log("emitting to mockdata", parsedData)
       if (parsedData.type === "trade" && gridRef.current) {
         gridRef.current.api.applyTransactionAsync({ update: parsedData.data });
       } else if (parsedData.type === "ready") {
@@ -101,45 +100,48 @@ const Home = () => {
 
 
 
-  const BtnCellRenderer = (props) => {
-    console.log(props.data);
-    const cellValue = props.valueFormatted ? props.valueFormatted : props.value;
-    const mock = props.data.mock;
-    // const buttonClicked = () => {
-    //   alert(`${cellValue} medals won!`);
-    // };
+  const unsubscribe = (data, mock) => {
 
-    const unsubscribe = (data) => {
-      socket.emit(`livedata`, {
-        type: "unsubscribe",
-        data
-      });
+    if (mock) {
       socket.emit(`mockdata`, {
         type: "unsubscribe",
         data
       });
+    } else {
+      socket.emit(`livedata`, {
+        type: "unsubscribe",
+        data
+      });
     }
 
-    const handleUnsubscribe = (value, mock = false) => {
-      // row.event.target.style.backgroundColor = "transparent";
-      console.log(mock);
-      if (mock) {
-        setSimData([
-          ...simData.filter((ro) => ro.s !== value)
-        ])
-      } else {
-        setData([
-          ...data.filter((ro) => ro.s !== value)
-        ])
-      }
+  }
 
-      const newIDS = activeIds.filter((ro) => ro !== value);
-      setActiveIds([
-        ...newIDS
-      ]);
-      unsubscribe(value);
-    }
+  const handleUnsubscribe = (value, mock = false) => {
+    console.log("data", data, "simData", simData);
+    console.log(value);
+    // if (mock) {
+    //   setSimData([
+    //     ...simData.filter((ro) => ro.s !== value)
+    //   ])
+    // } else {
+    //   setData([
+    //     ...data.filter((ro) => ro.s !== value)
+    //   ])
+    // }
 
+    const newIDS = activeIds.filter((ro) => ro !== value);
+    setActiveIds([
+      ...newIDS
+    ]);
+
+    // unsubscribe(value, mock);
+  }
+
+
+  const BtnCellRenderer = (props) => {
+    console.log(props.data);
+    const cellValue = props.valueFormatted ? props.valueFormatted : props.value;
+    const mock = props.data.mock;
     return (
       <span>
         <Button variant="danger" className="rounded-circle " style={{ padding: "0px 9px 3px 9px" }} onClick={() => handleUnsubscribe(cellValue, mock)} ><MinusSVG /></Button>
@@ -190,14 +192,14 @@ const Home = () => {
     // console.log(data)
   }, [data]);
 
-  const subscribe = (stockList) => {
+  const subscribe = (symbol) => {
     socket.emit(`livedata`, {
       type: "subscribe",
-      data: stockList
+      data: symbol
     });
     socket.emit(`mockdata`, {
       type: "subscribe",
-      data: stockList
+      data: symbol
     });
   }
 
@@ -222,7 +224,7 @@ const Home = () => {
 
       } else {
         // row.event.target.style.backgroundColor = "green";
-        subscribe(symbol);
+
         setData([
           ...data,
           {
@@ -243,7 +245,7 @@ const Home = () => {
             mock: true
           }
         ])
-
+        subscribe(symbol);
         setActiveIds([
           ...activeIds,
           symbol

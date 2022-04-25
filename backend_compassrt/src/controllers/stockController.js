@@ -15,7 +15,7 @@ exports.stockLookup = async (req, res) => {
 
         finnhubClient.symbolSearch(query, (error, data, response) => {
             if (error) {
-                return res.errorMessage(e.message);
+                return res.errorMessage(error.message);
             }
             return res.success(data);
         });
