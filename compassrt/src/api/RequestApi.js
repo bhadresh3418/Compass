@@ -12,11 +12,14 @@ const serviceRequest = {
 };
 
 const stockRequest = {
-    stockLookup:"/stock/stockLookup"
+    stockLookup: "/stock/stockLookup",
+    getWatchlist: "/stock/getWatchlist",
+    addToWatchlist: "/stock/addToWatchlist"
 }
 
 
-export {
+export
+{
     authRequest,
     serviceRequest,
     stockRequest

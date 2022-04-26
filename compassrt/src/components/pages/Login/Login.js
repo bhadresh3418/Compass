@@ -33,7 +33,7 @@ const Login = () =>
       dispatch(authenticate(token));
       setError(null);
       navigate("/dashboard");
-    } 
+    }
     else 
     {
       setError(res.message);
@@ -43,14 +43,14 @@ const Login = () =>
   const handleChange = (e) => 
   {
     console.log(e.target);
-    setInput({...input, [e.target.name]: e.target.value });
+    setInput({ ...input, [e.target.name]: e.target.value });
     console.log(input) // why is input state at this point one step behind? Ex: if I type "John", input state is "Joh"
   }
 
   const toogleTab = (e) => 
   {
     e.preventDefault();
-    setInput({firstname: "", lastname: "", email: "", password: "", confirm_password: "" });
+    setInput({ firstname: "", lastname: "", email: "", password: "", confirm_password: "" });
     setError(null);
     setLoginActive(!loginActive);
     console.log(loginActive);
@@ -71,7 +71,7 @@ const Login = () =>
       dispatch(authenticate(token));
       setError(null);
       navigate("/dashboard");
-    } 
+    }
     else 
     {
       setError(res.message);

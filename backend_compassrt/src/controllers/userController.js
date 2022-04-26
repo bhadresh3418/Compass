@@ -7,16 +7,20 @@ const Users = require("../models/Users");
 // Trigger URL : /api/stock/getUser
 // get User data by providing token
 
-exports.getUser = async (req, res) => {
-    try {
+exports.getUser = async (req, res) =>
+{
+    try
+    {
         const authUser = req.user;
         const user = await Users.findById(authUser.id);
-        if (!user) {
+        if (!user)
+        {
             return res.errorMessage("user not found");
         }
         user.emitPassword()
         return res.success(user);
-    } catch (e) {
+    } catch (e)
+    {
         return res.errorMessage(e.message);
     }
 }

@@ -9,12 +9,14 @@ export const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        authenticate: (state, action) => {
+        authenticate: (state, action) =>
+        {
             localStorage.setItem('token', action.payload);
             state.token = action.payload;
             state.isAuthenticated = true;
         },
-        logout: state=> {
+        logout: state =>
+        {
             localStorage.clear();
             state.token = null;
             state.isAuthenticated = false;

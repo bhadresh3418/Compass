@@ -22,27 +22,31 @@ const UserSchema = new Schema({
 
 // Create a method for setting User passwords
 
-UserSchema.methods.setPassword = function (password) {
+UserSchema.methods.setPassword = function (password)
+{
     delete this._id;
     this.salt = crypto.randomBytes(16).toString('hex');
     this.hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex');
 };
 
 // Create a method for emitting password from data
-UserSchema.methods.emitPassword = function () {
+UserSchema.methods.emitPassword = function ()
+{
     delete this._doc.salt;
     delete this._doc.hash;
 };
 
 // Create a method to validate passwords
-UserSchema.methods.validPassword = function (password) {
+UserSchema.methods.validPassword = function (password)
+{
     var hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex');
     return this.hash === hash;
 };
 
 
 // Create a method on the user model to generate a JWT
-UserSchema.methods.generateJWT = function () {
+UserSchema.methods.generateJWT = function ()
+{
     var today = new Date();
     var exp = new Date(today);
     exp.setDate(today.getDate() + 60);
@@ -55,7 +59,8 @@ UserSchema.methods.generateJWT = function () {
 };
 
 // Create a method to get the JSON representation of a user for authentication.
-UserSchema.methods.toAuthJSON = function () {
+UserSchema.methods.toAuthJSON = function ()
+{
     return {
         firstname: this.firstname,
         lastname: this.lastname,

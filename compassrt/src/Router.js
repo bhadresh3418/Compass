@@ -20,8 +20,8 @@ const Router = () =>
 {
     const auth = useSelector((state) => state.auth);
     const dispatch = useDispatch();
-    
-    useEffect(() => { if (auth.token ) { checkToken(); } }, []);
+
+    useEffect(() => { if (auth.token) { checkToken(); } }, []);
     useEffect(() => { console.log(auth); }, [auth]);
 
     const checkToken = async () => 
@@ -30,18 +30,18 @@ const Router = () =>
         {
             // const res = await getData();
             dispatch(authenticate(auth.token));
-        } 
+        }
         catch (e) { }
     }
     const lazyLoaded = (component, isPrivate) => 
     {
-        return isPrivate 
-                ? <PrivateRoute isAuthenticated={auth.isAuthenticated}>
-                    <Suspense fallback={<Loader />} > 
-                        {component} 
-                    </Suspense>
-                </PrivateRoute> 
-                : <Suspense fallback={<Loader />} >{component} </Suspense>
+        return isPrivate
+            ? <PrivateRoute isAuthenticated={auth.isAuthenticated}>
+                <Suspense fallback={<Loader />} >
+                    {component}
+                </Suspense>
+            </PrivateRoute>
+            : <Suspense fallback={<Loader />} >{component} </Suspense>
     }
 
     const PrivateRoute = ({ isAuthenticated, children }) => 

@@ -5,8 +5,8 @@ import SelectSearch from 'react-select-search';
  * Required keys are "name" and "value" but you can have and use any number of key/value pairs.
  */
 const options = [
-    {name: 'Swedish', value: 'sv'},
-    {name: 'English', value: 'en'},
+    { name: 'Swedish', value: 'sv' },
+    { name: 'English', value: 'en' },
     // {
     //     type: 'group',
     //     name: 'Group name',

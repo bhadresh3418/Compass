@@ -2,8 +2,10 @@
 // calls and everything to how we will handle incoming request
 const Users = require("../models/Users");
 
-exports.signup = async (req, res) => {
-    try {
+exports.signup = async (req, res) =>
+{
+    try
+    {
         // Use HTTPS preferably with HSTS to protect the passwords during transport;
         // SSL TLS protection will also help to protect data
         const userDetails = new Users({
@@ -34,7 +36,8 @@ exports.signup = async (req, res) => {
             success: true,
         })
 
-    } catch (e) {
+    } catch (e)
+    {
         return res.status(400).json({
             error: e.message,
             success: false,
@@ -42,17 +45,22 @@ exports.signup = async (req, res) => {
     }
 }
 
-exports.login = async (req, res) => {
-    try {
+exports.login = async (req, res) =>
+{
+    try
+    {
         // fetch the user and test password verification
         const user = await Users.findOne({ email: req.body.email }).exec();
         let token = null;
-        if (!user) {
+        if (!user)
+        {
             return res.errorMessage("user not found!")
         }
-        if (user.validPassword(req.body.password)) {
+        if (user.validPassword(req.body.password))
+        {
             token = user.generateJWT();
-        } else {
+        } else
+        {
             return res.errorMessage("wrong password!")
         }
 
@@ -63,7 +71,8 @@ exports.login = async (req, res) => {
             token
         });
 
-    } catch (e) {
+    } catch (e)
+    {
         return res.status(400).json({
             error: e.message,
             success: false,

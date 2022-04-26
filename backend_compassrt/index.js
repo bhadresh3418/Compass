@@ -30,7 +30,8 @@ connectRouter(app);
 //creating http server with integrated socket and connecting socket to finnhub realtime data
 const server = http.createServer(app);
 const serverIo = socketIo(server);
+
 connectSocket(serverIo);
 
 //connect to socket in nodejs // listen for requests
-server.listen(PORT, HOST, () => { console.log(`Server running on port ${HOST}:${PORT}`);})
+server.listen(PORT, HOST, () => { console.log(`Server running on port ${HOST}:${PORT}`); })

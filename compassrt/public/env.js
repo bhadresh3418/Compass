@@ -8,7 +8,7 @@ window.env = {
   "asl.log": "Destination=file",
   "ChocolateyInstall": "C:\\ProgramData\\chocolatey",
   "ChocolateyLastPathUpdate": "132536081617016679",
-  "CHROME_CRASHPAD_PIPE_NAME": "\\\\.\\pipe\\crashpad_15856_ZWWSTUZQEPTHYCGQ",
+  "CHROME_CRASHPAD_PIPE_NAME": "\\\\.\\pipe\\crashpad_9640_WBXSGKECORRHBVUK",
   "CLOUDSDK_PYTHON": "C:\\Users\\bhadr\\AppData\\Local\\Programs\\Python\\Python38\\python.exe",
   "COLOR": "1",
   "COLORTERM": "truecolor",

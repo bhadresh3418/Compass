@@ -1,7 +1,8 @@
 const ENV = require("./env");
 const mongoose = require("mongoose");
 
-module.exports = async (app) => {
+module.exports = async (app) =>
+{
     //connection to mongo db
     await mongoose.connect(ENV.MONGO_URL);
 
@@ -18,7 +19,8 @@ module.exports = async (app) => {
     // SIGHUP = signal: hang up
     process.on("SIGHUP", cleanup);
 
-    if (app) {
+    if (app)
+    {
         // set mongoose for whole app
         app.set("mongoose", mongoose);
         console.log("mogoose connected")
@@ -26,8 +28,10 @@ module.exports = async (app) => {
 };
 
 //cleanup function to close
-function cleanup() {
-    mongoose.connection.close(function () {
+function cleanup()
+{
+    mongoose.connection.close(function ()
+    {
         process.exit(0);
     });
 }

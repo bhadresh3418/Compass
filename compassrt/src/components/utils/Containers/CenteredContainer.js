@@ -1,9 +1,10 @@
 import React from 'react';
 
-const CenteredContainer = ({children}) => {
+const CenteredContainer = ({ children }) =>
+{
   return (
     <div className="vertical-center">{
-        children}</div>
+      children}</div>
   )
 }
 

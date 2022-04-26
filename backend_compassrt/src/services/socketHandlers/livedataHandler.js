@@ -1,8 +1,11 @@
-module.exports = (socketIo, socket, webSocket) => {
-  const handleLivedata = (data) => {
+module.exports = (socketIo, socket, webSocket) =>
+{
+  const handleLivedata = (data) =>
+  {
     const parsedData = data
     console.log(data);
-    switch (parsedData.type) {
+    switch (parsedData.type)
+    {
       case "start":
         console.log("started listening...")
         break;
@@ -13,8 +16,10 @@ module.exports = (socketIo, socket, webSocket) => {
         break;
       case "unsubscribe":
         socket.leave(parsedData.data);
-        socketIo.in(parsedData.data).allSockets().then(result => {
-          if (result.size === 0) {
+        socketIo.in(parsedData.data).allSockets().then(result =>
+        {
+          if (result.size === 0)
+          {
             console.log("un-subscribed to ", parsedData.data)
             webSocket.send(JSON.stringify({ type: 'unsubscribe', symbol: parsedData.data }));
           }

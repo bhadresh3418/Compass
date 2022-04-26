@@ -2,7 +2,8 @@ import React from 'react'
 import { Spinner } from 'react-bootstrap';
 import CenteredContainer from './Containers/CenteredContainer';
 
-const Loader = () => {
+const Loader = () =>
+{
   return (
     <CenteredContainer>
       <Spinner animation="border" >

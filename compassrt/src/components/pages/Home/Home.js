@@ -14,13 +14,14 @@ import { MinusSVG } from "../../../assets/SVG";
 
 import './Home.scss';
 import { Container, Form, FormControl, Button } from 'react-bootstrap';
-import { searchStock } from '../../../api';
+import { addToWatchlist, getWatchlist, searchStock } from '../../../api';
 
 const token = localStorage.getItem('token');
 const socket = io(`${env.SOCK_BASE_URL}?token=${token}`, { transports: ['websocket'] }); // important thing is adding websocket transporter to using socket 
 const initialData = [];
 
-const Home = () => {
+const Home = () =>
+{
   const [data, setData] = useState([]);
   const [simData, setSimData] = useState([]);
   const [activeIds, setActiveIds] = useState([]);
@@ -30,31 +31,42 @@ const Home = () => {
   const gridRef = useRef(null);
   const simGridRef = useRef(null);
 
-  useEffect(() => {
-    if (!socket.connected) {
+  useEffect(() =>
+  {
+    if (!socket.connected)
+    {
       socket.connect();
     }
-    socket.on('connect', socket => {
+    socket.on('connect', socket =>
+    {
       console.log('connected')
     })
-    socket.on(`livedata`, (data) => {
+    socket.addEventListener(`livedata`, (data) =>
+    {
       const parsedData = data;
-      console.log("emitting to livedata", parsedData)
-      if (parsedData.type === "trade" && gridRef.current) {
+      // console.log("emitting to livedata", parsedData)
+      if (parsedData.type === "trade" && gridRef.current)
+      {
         gridRef.current.api.applyTransactionAsync({ update: parsedData.data });
-      } else if (parsedData.type === "ready") {
+      } else if (parsedData.type === "ready")
+      {
+
         socket.emit(`livedata`, {
           type: "start"
         });
         setReady(true);
+        getWatchlistData();
       }
     })
-    socket.on(`mockdata`, (data) => {
+    socket.addEventListener(`mockdata`, (data) =>
+    {
       const parsedData = data;
-      console.log("comes from mockdata", parsedData)
-      if (parsedData.type === "trade" && simGridRef.current) {
+      // console.log("comes from mockdata", parsedData)
+      if (parsedData.type === "trade" && simGridRef.current)
+      {
         simGridRef.current.api.applyTransactionAsync({ update: parsedData.data });
-      } else if (parsedData.type === "ready") {
+      } else if (parsedData.type === "ready")
+      {
         socket.emit(`mockdata`, {
           type: "start"
         });
@@ -62,26 +74,70 @@ const Home = () => {
       }
     })
 
-    return () => {
+    return () =>
+    {
       socket.removeAllListeners(`livedata`);
       socket.removeAllListeners(`mockdata`);
       socket.disconnect();
     }
   }, []);
 
-  const loadingCellRenderer = useMemo(() => {
+
+  const getWatchlistData = async () =>
+  {
+    const res = await getWatchlist();
+    if (res.success)
+    {
+      setData(res.data.map((stock) =>
+      {
+
+        socket.emit(`livedata`, {
+          type: "subscribe",
+          data: stock
+        });
+        return {
+          s: stock,
+          v: 0,
+          p: 0
+        }
+      }));
+      setSimData(res.data.map((stock) =>
+      {
+        socket.emit(`mockdata`, {
+          type: "subscribe",
+          data: stock
+        });
+
+        return {
+          s: stock,
+          v: 0,
+          p: 0,
+          mock: true
+        }
+      }))
+
+
+
+    }
+  }
+
+  const loadingCellRenderer = useMemo(() =>
+  {
     return <Loader />
   }, []);
 
-  const numberCellFormatter = (params) => {
+  const numberCellFormatter = (params) =>
+  {
     return String(Number(params.value).toFixed(2)) + " $";
   };
 
-  const volumnFormatter = (params) => {
-    return params.value.toFixed(5)
+  const volumnFormatter = (params) =>
+  {
+    return Math.floor(params.value)
   };
 
-  const timeFormatter = (params) => {
+  const timeFormatter = (params) =>
+  {
     return new Date(params.value).toLocaleTimeString();
   }
 
@@ -89,7 +145,8 @@ const Home = () => {
     { headerName: 'Stock', field: 'displaySymbol', sortable: true }
   ]);
 
-  const defaultColDef = useMemo(() => {
+  const defaultColDef = useMemo(() =>
+  {
     return {
       flex: 1,
       minWidth: 120,
@@ -100,14 +157,17 @@ const Home = () => {
 
 
 
-  const unsubscribe = (data, mock) => {
+  const unsubscribe = (data, mock) =>
+  {
 
-    if (mock) {
+    if (mock)
+    {
       socket.emit(`mockdata`, {
         type: "unsubscribe",
         data
       });
-    } else {
+    } else
+    {
       socket.emit(`livedata`, {
         type: "unsubscribe",
         data
@@ -116,7 +176,8 @@ const Home = () => {
 
   }
 
-  const handleUnsubscribe = (value, mock = false) => {
+  const handleUnsubscribe = (value, mock = false) =>
+  {
     console.log("data", data, "simData", simData);
     console.log(value);
     // if (mock) {
@@ -134,11 +195,12 @@ const Home = () => {
       ...newIDS
     ]);
 
-    // unsubscribe(value, mock);
+    unsubscribe(value, mock);
   }
 
 
-  const BtnCellRenderer = (props) => {
+  const BtnCellRenderer = (props) =>
+  {
     console.log(props.data);
     const cellValue = props.valueFormatted ? props.valueFormatted : props.value;
     const mock = props.data.mock;
@@ -178,21 +240,18 @@ const Home = () => {
       cellRenderer: BtnCellRenderer,
       minWidth: 100,
       cellClass: 'text-center'
-      // cellRendererParams: {
-      //   clicked: function (field) {
-      //     alert(`${field} was clicked`);
-      //   },
-      // },
 
     }
   ]);
 
   //use effect with dependencies will get called whenever state changes
-  useEffect(() => {
+  useEffect(() =>
+  {
     // console.log(data)
   }, [data]);
 
-  const subscribe = (symbol) => {
+  const subscribe = async (symbol) =>
+  {
     socket.emit(`livedata`, {
       type: "subscribe",
       data: symbol
@@ -201,30 +260,36 @@ const Home = () => {
       type: "subscribe",
       data: symbol
     });
+    await addToWatchlist(symbol)
   }
 
-  const startFeed = (api) => {
+  const startFeed = (api) =>
+  {
     console.log("grid ready")
   };
 
-  const getRowId = useCallback(function (params) {
+  const getRowId = useCallback(function (params)
+  {
     return params.data.s;
   }, []);
 
-  // onGrid ready function will executed when grid is ready with rendered data in short mounted we will add logic to start socket on it
-  const onGridReady = useCallback((params) => {
-    // setData(initialData);
+  // onGrid ready function will executed when grid is ready with 
+  // rendered data in short mounted we will add logic to start socket on it
+  const onGridReady = useCallback((params) =>
+  {
     startFeed(params.api);
   }, []);
 
 
-  const onCellClicked = (symbol) => {
-    if (ready && gridRef.current) {
-      if (data.find((r) => r.s === symbol)) {
+  const onCellClicked = (symbol) =>
+  {
+    if (ready && gridRef.current)
+    {
+      if (data.find((r) => r.s === symbol))
+      {
 
-      } else {
-        // row.event.target.style.backgroundColor = "green";
-
+      } else
+      {
         setData([
           ...data,
           {
@@ -251,49 +316,46 @@ const Home = () => {
           symbol
         ])
       }
-    } else {
+    } else
+    {
       console.log("server is not ready yet");
     }
-
-    // const currentData = initialData.find((a)=>a.id === row.data.id);
   }
 
-  const getOptions = async (query) => {
-    return new Promise((resolve) => {
+  const getOptions = async (query) =>
+  {
+    return new Promise((resolve) =>
+    {
       console.log(query);
-      // widgetRef.current.api.showLoadingOverlay();
-      if (query.length <= 1) {
+      if (query.length <= 1)
+      {
         resolve([])
-      } else {
-        searchStock(query).then((res) => {
-          if (res.success) {
-            resolve(res.data.result.map((data) => {
+      } else
+      {
+        searchStock(query).then((res) =>
+        {
+          if (res.success)
+          {
+            resolve(res.data.result.map((data) =>
+            {
               return {
                 value: data.symbol,
                 name: data.displaySymbol,
                 ...data
               }
             }))
-          } else {
+          } else
+          {
             resolve([])
           }
-        }).catch((err) => {
+        }).catch((err) =>
+        {
         })
       }
-
-      // widgetRef.current.api.hideOverlay();
-
-      // widgetRef.current.api.setRowData(res.data.result);
     })
   }
 
   const options = [
-    //     type: 'group',
-    //     name: 'Group name',
-    //     items: [
-    //         {name: 'Spanish', value: 'es'},
-    //     ]
-    // },
   ];
 
   return (
@@ -312,10 +374,13 @@ const Home = () => {
             //   onCellClicked(value)
             // }}
             // emptyMessage="Empty"
-            renderOption={(optionProps, optionData) => {
+            renderOption={(optionProps, optionData) =>
+            {
               console.log(optionProps, optionData);
-              if (optionData) {
-                return (<div className="select-search__row_custom text-white p-2 rounded-3" value={optionData.value} onClick={(e) => {
+              if (optionData)
+              {
+                return (<div className="select-search__row_custom text-white p-2 rounded-3" value={optionData.value} onClick={(e) =>
+                {
                   console.log(e)
                   e.preventDefault();
                   onCellClicked(optionData.value);
@@ -340,19 +405,7 @@ const Home = () => {
           {/* <Form.Control className="my-3 w-50" type="text" placeholder="search: AAAP, FB, GOOG.." name="searchQuery" value={searchQuery} onChange={handleSearch} /> */}
         </div>
         <div className="d-flex w-100 justify-content-center mb-3">
-          {/* <div className="ag-theme-alpine-dark" style={{ height: 600, width: 200 }}>
-            <AgGridReact
-              ref={widgetRef}
-              getRowId={getRowId}   // passing function that defines unique id for row in our case it's name
-              rowData={initialData}   // passing initial data to render on widget table
-              // asyncTransactionWaitMillis={1000} // interval to update data
-              onCellClicked={onCellClicked} // function that will execute on cell clicked
-              columnDefs={columnDefsForNames} // column definations
-              loadingCellRenderer={loadingCellRenderer}
-              animateRows={true} // animation of rows true
-            >
-            </AgGridReact>
-          </div> */}
+
           <div className="ag-theme-alpine-dark px-2" style={{ height: 600, width: 850 }}>
 
             {/* Data table high frequency */}
@@ -385,16 +438,6 @@ const Home = () => {
             >
             </AgGridReact>
           </div>
-          {/*            
-            <DataTable
-              theme='dark'
-              striped
-              sortIcon={true}
-              title="current market affairs"
-              conditionalRowStyles={conditionalRowStyles}    
-              columns={columns}
-              data={data}
-            /> */}
         </div>
         {/* </CenteredContainer> */}
       </Container>
