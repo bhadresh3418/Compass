@@ -6,15 +6,9 @@ import { authenticate } from '../../../redux/slices/authReducer';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
-  const [input, setInput] = useState({
-    firstname: "",
-    lastname: "",
-    email: "",
-    password: "",
-    confirm_password: ""
-  });
-
+const Login = () => 
+{
+  const [input, setInput] = useState({ firstname: "", lastname: "", email: "", password: "", confirm_password: "" });
   const [loginActive, setLoginActive] = useState(true)
   const [error, setError] = useState(null);
 
@@ -22,71 +16,67 @@ const Login = () => {
   const navigate = useNavigate()
   const auth = useSelector(state => state.auth);
 
-  useEffect(() => {
-    if (auth.token && auth.isAuthenticated) {
-      navigate("/dashboard");
-    }
-  }, []);
+  useEffect(() => { if (auth.token && auth.isAuthenticated) { navigate("/dashboard"); } }, []);
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e) => 
+  {
     e.preventDefault();
-    if (!input.email || !input.password) {
+    if (!input.email || !input.password) 
+    {
       setError("All fields are required!")
       return;
     }
     const res = await login(input);
-    if (res.success) {
-      const token = res.data.token;
+    if (res.success) 
+    {
+      const token = res.data.token; // this is jwt token
       dispatch(authenticate(token));
       setError(null);
       navigate("/dashboard");
-    } else {
+    } 
+    else 
+    {
       setError(res.message);
     }
   }
 
-  const handleChange = (e) => {
+  const handleChange = (e) => 
+  {
     console.log(e.target);
-    setInput({
-      ...input,
-      [e.target.name]: e.target.value
-    });
-    console.log(input)
+    setInput({...input, [e.target.name]: e.target.value });
+    console.log(input) // why is input state at this point one step behind? Ex: if I type "John", input state is "Joh"
   }
 
-
-  const toogleTab = (e) => {
+  const toogleTab = (e) => 
+  {
     e.preventDefault();
-
-    setInput({
-      firstname: "",
-      lastname: "",
-      email: "",
-      password: "",
-      confirm_password: ""
-    });
+    setInput({firstname: "", lastname: "", email: "", password: "", confirm_password: "" });
     setError(null);
     setLoginActive(!loginActive);
     console.log(loginActive);
   }
 
-  const handleSignUp = async (e) => {
+  const handleSignUp = async (e) => 
+  {
     e.preventDefault();
-    if (Object.values(input).find((value) => !value)) {
+    if (Object.values(input).find((value) => !value)) 
+    {
       setError("All fields are required!")
       return;
     }
     const res = await signUp(input);
-    if (res.success) {
+    if (res.success) 
+    {
       const token = res.data.token;
       dispatch(authenticate(token));
       setError(null);
       navigate("/dashboard");
-    } else {
+    } 
+    else 
+    {
       setError(res.message);
     }
   }
-
 
   return (
     <div className="d-flex align-items-center justify-content-center min-vh-100" >
@@ -99,7 +89,6 @@ const Login = () => {
               <p>Advance, fast and optimized application that can handle millions of users at a same time.</p>
             </div>
           </Col>
-
 
           <Col xs={12} md={{ span: '6', order: 'last' }} className={`p-2 p-md-5 d-flex align-items-center ${loginActive ? "d-block" : "d-none"}`} style={{ minHeight: "560px" }}>
 
@@ -130,9 +119,6 @@ const Login = () => {
               </Form.Group>
             </Form>
           </Col>
-
-
-
 
           <Col xs={12} md={{ span: '6', order: 'first' }} className={`p-2 p-md-5 ${loginActive ? "d-none" : "d-block"}`} style={{ minHeight: "560px" }}>
             <Form className="m-1 m-md-auto">
@@ -177,7 +163,6 @@ const Login = () => {
         </Row>
       </Container>
     </div>
-
   )
 }
 

@@ -14,45 +14,40 @@ const Home = lazy(() => import("./components/pages/Home/Home"));
 const About = lazy(() => import("./components/pages/About/About"));
 const Login = lazy(() => import("./components/pages/Login/Login"));
 
-
 //lazyLoaded component needed fallback UI either can't displayed by react-route-dom
 
-
-const Router = () => {
-
+const Router = () => 
+{
     const auth = useSelector((state) => state.auth);
     const dispatch = useDispatch();
     
-    useEffect(() => {
-        if (auth.token ) {
-            checkToken();
-        }
-    }, []);
+    useEffect(() => { if (auth.token ) { checkToken(); } }, []);
+    useEffect(() => { console.log(auth); }, [auth]);
 
-    useEffect(() => {
-        console.log(auth);
-    }, [auth]);
-
-    const checkToken = async () => {
-        try {
+    const checkToken = async () => 
+    {
+        try 
+        {
             // const res = await getData();
             dispatch(authenticate(auth.token));
-        } catch (e) {
-        }
+        } 
+        catch (e) { }
     }
-    const lazyLoaded = (component, isPrivate) => {
-        return isPrivate ? <PrivateRoute isAuthenticated={auth.isAuthenticated}>
-            <Suspense fallback={<Loader />} >
-                {component}
-            </Suspense>
-        </PrivateRoute> : <Suspense fallback={<Loader />} >{component}
-        </Suspense>
+    const lazyLoaded = (component, isPrivate) => 
+    {
+        return isPrivate 
+                ? <PrivateRoute isAuthenticated={auth.isAuthenticated}>
+                    <Suspense fallback={<Loader />} > 
+                        {component} 
+                    </Suspense>
+                </PrivateRoute> 
+                : <Suspense fallback={<Loader />} >{component} </Suspense>
     }
 
-    const PrivateRoute = ({ isAuthenticated, children }) => {
+    const PrivateRoute = ({ isAuthenticated, children }) => 
+    {
         return isAuthenticated ? children : <Navigate to="/" />;
     };
-
 
     return (
         <BrowserRouter>
