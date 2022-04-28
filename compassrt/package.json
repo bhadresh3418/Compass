@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@react-rxjs/core": "^0.9.5",
+    "@react-rxjs/utils": "^0.9.5",
     "@reduxjs/toolkit": "^1.8.1",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
@@ -26,6 +28,7 @@
     "react-scripts": "5.0.1",
     "react-select-async-paginate": "^0.6.1",
     "react-select-search": "^3.0.9",
+    "rxjs": "^7.5.5",
     "socket.io-client": "^4.4.1",
     "web-vitals": "^2.1.4"
   },

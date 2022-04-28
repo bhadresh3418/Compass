@@ -21,11 +21,8 @@ module.exports = function (req, res, next)
             if (err)
             {
                 // logger.error(err);
-                console.log(err);
-                return res.json({
-                    success: false,
-                    message: "Failed to authenticate token.",
-                });
+                console.log(err.message);
+                return res.unauthorized();
             }
             req.user = decoded;
             return next();

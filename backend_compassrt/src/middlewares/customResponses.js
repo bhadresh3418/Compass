@@ -22,6 +22,7 @@ const customResponses =
 
 module.exports = (req, res, next) => 
 {
+    
     Object.assign(res, customResponses);
     next();
 };

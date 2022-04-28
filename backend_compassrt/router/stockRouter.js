@@ -7,5 +7,6 @@ const stockController = require("../src/controllers/stockController")
 router.get("/stockLookup", verifyToken, stockController.stockLookup);
 router.get("/getWatchlist", verifyToken, stockController.getWatchlist);
 router.post("/addToWatchlist", verifyToken, stockController.addToWatchlist);
+router.post("/removeFromWatchlist", verifyToken, stockController.removeFromWatchlist);
 
 module.exports = router

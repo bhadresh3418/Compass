@@ -13,7 +13,7 @@ exports.stockLookup = async (req, res) =>
         const query = req.query.q;
         if (!query)
         {
-            return res.errorMessage("search query is required!F");
+            return res.errorMessage("search query is required!");
         }
 
         finnhubClient.symbolSearch(query, (error, data, response) =>
@@ -57,6 +57,43 @@ exports.getWatchlist = async (req, res) =>
 // }
 
 exports.addToWatchlist = async (req, res) =>
+{
+    try
+    {
+        const user = req.user;
+        const user_id = user.id;
+        const symbol = req.body.symbol;
+
+        const stockData = await UserStocks.findOne({ user_id });
+        if (stockData)
+        {
+            if (!stockData.watch_list.includes(symbol))
+            {
+                await UserStocks.findOneAndUpdate({ id: stockData.id }, { $push: { watch_list: symbol } });
+            }
+        } else
+        {
+            const watchlist = new UserStocks({
+                user_id,
+                watch_list: [symbol]
+            })
+            await watchlist.save();
+        }
+        return res.success("Successfully added");
+    } catch (e)
+    {
+        return res.errorMessage(e.message);
+    }
+}
+
+// Trigger URL : /api/stock/removeFromWatchlist
+// Add stock symbol to user's watchlist
+// request body
+// {
+//    "symbol":"AAPL"
+// }
+
+exports.removeFromWatchlist = async (req, res) =>
 {
     try
     {

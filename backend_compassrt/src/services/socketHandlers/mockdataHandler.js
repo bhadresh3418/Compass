@@ -1,3 +1,5 @@
+const { concatAll, Observable, throttleTime, mergeMap, reduce, bufferCount, map, bufferTime, of } = require('rxjs');
+const { timeInterval, throttle } = require('rxjs/operators');
 module.exports = (socketIo, socket, webSocket) =>
 {
   const handleMockData = (data) =>
@@ -8,30 +10,50 @@ module.exports = (socketIo, socket, webSocket) =>
     switch (parsedData.type)
     {
       case "start":
-        setInterval(() =>
+
+        const observable$ = new Observable(function subscribe(subscriber)
         {
-          // console.log("mock_",Object.assign(socket.adapter))
-
-          Array.from(socket.adapter.rooms).forEach((room) =>
+          setInterval(() =>
           {
-
-            if (typeof (room[0]) === 'string' && room[0].split("_")[0] === "mock")
+            Array.from(socket.adapter.rooms).forEach((room) =>
             {
-              const stackname = room[0].split("_")[1];
-              const generatedData = [{
-                s: stackname,
-                v: Math.random() * 1000,
-                p: Math.random() * 100,
-                mock: true
-              }];
-              socketIo.to(room[0]).emit(`mockdata`, {
-                type: 'trade',
-                data: generatedData
-              });
-            }
-          })
 
-        }, 1000);
+              if (typeof (room[0]) === 'string' && room[0].split("_")[0] === "mock")
+              {
+                const stackname = room[0].split("_")[1];
+                const generatedData = {
+                  s: stackname,
+                  v: Math.random() * 1000,
+                  p: Math.random() * 100,
+                  mock: true
+                };
+                subscriber.next(generatedData);
+
+              }
+            })
+          }, 10);
+        });
+        observable$.pipe(bufferTime(1000)).subscribe((v) =>
+        {
+          const groupBy = (xs, key) =>
+          {
+            return xs.reduce(function (rv, x)
+            {
+              rv[x[key]] = [x];
+              return rv;
+            }, {});
+          };
+          const grouped = groupBy(v, 's')
+          Object.keys(grouped).forEach((trade) =>
+          {
+            socketIo.to('mock_' + trade).emit(`mockdata`, {
+              type: 'trade',
+              data: grouped[trade]
+            });
+          })
+          // console.log("grouped", grouped);
+        })
+
         break;
       case "subscribe":
         socket.join("mock_" + parsedData.data); // 5

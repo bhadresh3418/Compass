@@ -2,13 +2,15 @@ import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import io from "socket.io-client";
 import { AgGridReact } from 'ag-grid-react';
 import env from 'react-dotenv';
-
+import { liveFeed, mockFeed } from '../../../feed';
 import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css'; // option ag-theme-alpine-dark
 import Loader from '../../utils/Loader';
 import SelectSearch from 'react-select-search';
 import './SelectorStyle.scss';
+import { concatAll, Observable, throttleTime, mergeMap, groupBy, reduce, bufferCount, map, bufferTime, of } from 'rxjs';
+import { timeInterval, throttle } from 'rxjs/operators';
 
 import { MinusSVG } from "../../../assets/SVG";
 
@@ -16,10 +18,15 @@ import './Home.scss';
 import { Container, Form, FormControl, Button } from 'react-bootstrap';
 import { addToWatchlist, getWatchlist, searchStock } from '../../../api';
 
-const token = localStorage.getItem('token');
-const socket = io(`${env.SOCK_BASE_URL}?token=${token}`, { transports: ['websocket'] }); // important thing is adding websocket transporter to using socket 
-const initialData = [];
 
+
+const token = localStorage.getItem('token');
+// const socket = io(`${env.SOCK_BASE_URL}?token=${token}`, { transports: ['websocket'] }); // important thing is adding websocket transporter to using socket 
+
+
+const socket = io();
+const initialData = [];
+let interval = null;
 const Home = () =>
 {
   const [data, setData] = useState([]);
@@ -28,57 +35,153 @@ const Home = () =>
   const [ready, setReady] = useState(false);
   const [searchQuery, setSearchQuery] = useState(null);
 
-  const gridRef = useRef(null);
-  const simGridRef = useRef(null);
-
-  useEffect(() =>
+  const observable$ = new Observable(function subscribe(subscriber)
   {
-    if (!socket.connected)
-    {
-      socket.connect();
-    }
-    socket.on('connect', socket =>
-    {
-      console.log('connected')
-    })
-    socket.addEventListener(`livedata`, (data) =>
-    {
-      const parsedData = data;
-      // console.log("emitting to livedata", parsedData)
-      if (parsedData.type === "trade" && gridRef.current)
-      {
-        gridRef.current.api.applyTransactionAsync({ update: parsedData.data });
-      } else if (parsedData.type === "ready")
-      {
-
-        socket.emit(`livedata`, {
-          type: "start"
-        });
-        setReady(true);
-        getWatchlistData();
-      }
-    })
-    socket.addEventListener(`mockdata`, (data) =>
+    liveFeed.onChange((data) =>
     {
       const parsedData = data;
       // console.log("comes from mockdata", parsedData)
       if (parsedData.type === "trade" && simGridRef.current)
       {
-        simGridRef.current.api.applyTransactionAsync({ update: parsedData.data });
+        subscriber.next(parsedData.data[0]);
+        // subscriber.complete()
       } else if (parsedData.type === "ready")
       {
-        socket.emit(`mockdata`, {
-          type: "start"
-        });
+        liveFeed.start();
         setReady(true);
+        getWatchlistData();
+      }
+    })
+  });
+
+  const mockObservable$ = new Observable(function subscribe(subscriber)
+  {
+    mockFeed.onChange((data) =>
+    {
+      const parsedData = data;
+      // console.log("comes from mockdata", parsedData)
+      if (parsedData.type === "trade" && simGridRef.current)
+      {
+        subscriber.next(parsedData.data[0]);
+        // subscriber.complete()
+      } else if (parsedData.type === "ready")
+      {
+        mockFeed.start();
+        setReady(true);
+        // getWatchlistData();
+      }
+    })
+  });
+
+
+
+  const gridRef = useRef(null);
+  const simGridRef = useRef(null);
+
+  useEffect(() =>
+  {
+
+    // if (!socket.connected)
+    // {
+    //   socket.connect();
+    // }
+    // socket.on('connect', socket =>
+    // {
+    //   console.log('connected')
+    // })
+    // socket.addEventListener(`livedata`, (data) =>
+    // {
+    //   const parsedData = data;
+    //   // console.log("emitting to livedata", parsedData)
+    //   if (parsedData.type === "trade" && gridRef.current)
+    //   {
+    //     gridRef.current.api.applyTransactionAsync({ update: parsedData.data });
+    //   } else if (parsedData.type === "ready")
+    //   {
+    //     socket.emit(`livedata`, {
+    //       type: "start"
+    //     });
+    //     setReady(true);
+    //     getWatchlistData();
+
+    //   }
+    // });
+
+    // setInterval(() =>
+    // { 
+    //   if (simGridRef.current)
+    //   {
+    //     simGridRef.current.api.applyTransactionAsync({ update: observable$.getValue() });
+    //   }
+    // }, 1000)
+    // socket.addEventListener(`mockdata`, (data) =>
+    // {
+    //   const parsedData = data;
+    //   // console.log("comes from mockdata", parsedData)
+    //   if (parsedData.type === "trade" && simGridRef.current)
+    //   {
+    //     simGridRef.current.api.applyTransactionAsync({ update: parsedData.data });
+    //   } else if (parsedData.type === "ready")
+    //   {
+    //     socket.emit(`mockdata`, {
+    //       type: "start"
+    //     });
+    //     setReady(true);
+    //   }
+    // })
+
+    // feed.onChange((data) =>
+    // {
+    //   const parsedData = data;
+    //   console.log("comes from mockdata", parsedData)
+    //   if (parsedData.type === "trade" && simGridRef.current)
+    //   {
+    //     inputStream(parsedData.data);
+    //     // if (!interval)
+    //     // {
+
+    //     // interval = setTimeout(() =>
+    //     // {
+    //     simGridRef.current.api.applyTransactionAsync({ update: parsedData.data });
+    //     //   clearTimeout(interval);
+    //     //   interval = null
+    //     // }, 1000);
+    //     // }
+
+    //     // console.log(parsedData);
+
+    //   } else if (parsedData.type === "ready")
+    //   {
+    //     feed.start();
+    //     setReady(true);
+    //     getWatchlistData();
+    //   }
+    // })
+
+    mockObservable$.pipe(
+      bufferTime(1000)
+    ).subscribe(v =>
+    {
+      if (simGridRef.current)
+      {
+        simGridRef.current.api.applyTransactionAsync({ update: v });
+      }
+    })
+    observable$.pipe(
+      bufferTime(1000)
+    ).subscribe(v =>
+    {
+      console.log(v);
+      if (gridRef.current)
+      {
+        gridRef.current.api.applyTransactionAsync({ update: v });
       }
     })
 
     return () =>
     {
-      socket.removeAllListeners(`livedata`);
-      socket.removeAllListeners(`mockdata`);
-      socket.disconnect();
+      observable$.unsubscribe();
+      mockObservable$.unsubscribe();
     }
   }, []);
 
@@ -90,24 +193,22 @@ const Home = () =>
     {
       setData(res.data.map((stock) =>
       {
-
-        socket.emit(`livedata`, {
-          type: "subscribe",
-          data: stock
-        });
+        liveFeed.watch(stock);
         return {
           s: stock,
           v: 0,
           p: 0
         }
       }));
+
       setSimData(res.data.map((stock) =>
       {
-        socket.emit(`mockdata`, {
-          type: "subscribe",
-          data: stock
-        });
+        // socket.emit(`mockdata`, {
+        //   type: "subscribe",
+        //   data: stock
+        // });
 
+        mockFeed.watch(stock);
         return {
           s: stock,
           v: 0,
@@ -162,16 +263,18 @@ const Home = () =>
 
     if (mock)
     {
-      socket.emit(`mockdata`, {
-        type: "unsubscribe",
-        data
-      });
+      // socket.emit(`mockdata`, {
+      //   type: "unsubscribe",
+      //   data
+      // });
+      mockFeed.unwatch(data);
     } else
     {
-      socket.emit(`livedata`, {
-        type: "unsubscribe",
-        data
-      });
+      liveFeed.unwatch(data);
+      // socket.emit(`livedata`, {
+      //   type: "unsubscribe",
+      //   data
+      // });
     }
 
   }
@@ -252,14 +355,8 @@ const Home = () =>
 
   const subscribe = async (symbol) =>
   {
-    socket.emit(`livedata`, {
-      type: "subscribe",
-      data: symbol
-    });
-    socket.emit(`mockdata`, {
-      type: "subscribe",
-      data: symbol
-    });
+    liveFeed.watch(symbol);
+    mockFeed.watch(symbol);
     await addToWatchlist(symbol)
   }
 

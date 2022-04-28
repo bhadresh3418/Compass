@@ -3,6 +3,7 @@ import * as RequestApi from "./RequestApi";
 
 //Common functions to manage request/response/error handling
 
+const getToken = () => localStorage.getItem('token');
 const sendError = (err, showConsole = false) => 
 {
     if (showConsole) { console.log(err); }
@@ -12,13 +13,23 @@ const sendError = (err, showConsole = false) =>
 
 const postRequest = async (URI, data, headers = null) => 
 {
-    const res = await instance.post(URI, data, headers);
+    console.log(getToken());
+    const res = await instance.post(URI, data, {
+        headers: {
+            "x-access-token": getToken(),
+        },
+    });
     return res;
 }
 
 const getRequest = async (URI, headers = null) => 
 {
-    const res = await instance.get(URI, null, headers);
+    console.log(getToken());
+    const res = await instance.get(URI, {
+        headers: {
+            "x-access-token": getToken()
+        },
+    });
     return res;
 }
 

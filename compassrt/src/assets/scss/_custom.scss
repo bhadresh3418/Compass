@@ -1,26 +1,33 @@
 @import "colors";
 @import "/node_modules/bootstrap/scss/bootstrap";
 
+
+
 textarea:hover,
 input:hover,
 textarea:active,
 input:active,
 textarea:focus,
 input:focus,
-button:focus,
-button:active,
-button:hover,
-label:focus,
-.btn:active,
-.btn.active {
-    outline: 0px !important;
+label:focus {
     -webkit-appearance: none;
     box-shadow: none !important;
     border: 1px solid darkgray !important;
 }
+button:focus,
+button:active,
+button:hover,
+.btn:active,
+.btn.active {
+    outline: 0px !important;
+}
+
 input {
     height: 2rem;
     background-color: $secondary !important;
     color: $muted !important;
     border: 1px solid #383c47 !important;
+}
+.btn:hover {
+    transform: scale(1.05);
 }
